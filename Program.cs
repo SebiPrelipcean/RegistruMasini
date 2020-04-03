@@ -1,39 +1,131 @@
-﻿using LibrarieEntitati;
-using System;
+﻿using System;
+using System.Data;
+using System.Collections;
+using System.IO;
+using Car;
 
-
-namespace ManagementStudenti
+namespace RegistruMasini
 {
     class Program
     {
-        static void Main(string[] args)
+        const int MAX = 100;
+        static void Main()
         {
-            Student s = new Student("Ionescu");
-            //s.SetNote("");
-            //eXERCITIUL 2
+            
 
-            string[] A =new string[args.Length];
-            string X;
-            string alf = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,X,Z";
-            string[] Alfabet = alf.Split(',');
-           for (int j = 0; j < args.Length; j++)
-                A[j] = args[j];
-            Console.WriteLine("ARGUMENTELE: ");
-            for (int o = 0; o < A.Length; o++)
-                Console.WriteLine(A[o]);
-            Console.WriteLine();
-           for(int i = 0;i<Alfabet.Length;i++)
+            Masina[] RegM = new Masina[MAX];
+            int NRM = 0;
+            try
             {
-                Console.Write(Alfabet[i] + ":");
-                for (int k = 0; k < A.Length; k++)
-                    if (Alfabet[i] == A[k].Substring(0, 1))
-                        Console.Write(A[k]);
-                Console.WriteLine();
-                
-            }
+                using (StreamReader sr = new StreamReader("Masini.txt"))
+                {
+                    string linie;
+                    while ((linie = sr.ReadLine()) != null)
+                    {
+                        RegM[NRM++] = new Masina(linie);
+                        if (NRM == MAX)
+                        { Array.Resize(ref RegM, NRM + 20); }
+                    }
 
-            Console.WriteLine(s.ConversieLaSir());
-            Console.ReadKey();
+
+                }
+
+            }
+            catch (IOException eIO)
+            {
+                throw new Exception("Eroare la deschiderea fisierului : " + eIO.Message);
+
+            }
+            while (true)
+            {
+
+                    Console.Clear();
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("{0 , -10} {1,35} {2,30}", "###", "RegistruMasini v1.0", "###");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine();
+                Console.WriteLine("* A - Vizualizare registru masini");
+                Console.WriteLine("* B - Adaugare masina in registru");
+                Console.WriteLine("* C - Stergere masina din registru");
+                Console.WriteLine("* D - Editare masina din registru ");
+                Console.WriteLine("* E - Compara doua masini ");
+                Console.WriteLine("* F - Cautare masina in registru");
+                Console.WriteLine("* X - Iesire aplicatie!");
+                Console.WriteLine();
+                Console.Write("Introduceti optiunea dorita: ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Cyan;
+
+                string titlu = string.Format("{0,0}{1,10}{2,10}{3,15}{4,10}{5,10}\n", "NrC|", "Marca|", "Model|", "Culoare|", "Pret|", "An");
+
+                string OPT = Console.ReadLine();
+                switch (OPT)
+                {
+                    case "A":
+                    case "a":
+                        Console.WriteLine();
+                        Console.WriteLine(titlu);
+                        Console.ResetColor();
+                        //for (int i = 0; i < NRM; i++)
+                        //    Console.WriteLine(i +"\t"+ (RegM[i].Info()));
+                        RegM[0].chenar(RegM, NRM);
+
+                        
+                        Console.ReadKey();
+                        break;
+                    case "B":
+                    case "b":
+                        var x = new Masina().CitireTastatura();
+                        RegM[NRM++] = x;
+                        //if (RegM[NRM]!= Null)
+                        //    Console.WriteLine("Adaugat cu succes! ");
+                        //else
+                        //    Console.WriteLine("Adaugare esuata! :(");
+                        Console.ReadKey();
+                        break;
+                    case "C":
+                    case "c":
+                        Console.ReadKey();
+                        break;
+                    case "D":
+                    case "d":
+                        Console.ReadKey();
+                        break;
+                    case "E":
+                    case "e":
+                        Console.WriteLine(titlu);
+                        for (int i = 0; i < NRM; i++)
+                            Console.WriteLine(i + "\t" + RegM[i].Info());
+                        Console.WriteLine("Care masini doriti sa le comparati?(numarul) : ");
+                        int x1 = Convert.ToInt32(Console.ReadLine());
+                        int x2 = Convert.ToInt32(Console.ReadLine());
+                        if (RegM[x1].ComparareMasini(RegM[x2]) == true)
+                            Console.WriteLine("Numarul " + x1 + " si numarul " + x2 + " sunt lafel");
+                        else
+                            Console.WriteLine("Numarul " + x1 + " si numarul " + x2 + " nu sunt lafel");
+                        Console.ReadKey();
+                        break;
+                    case "F":
+                    case "f":
+                        Console.ReadKey();
+                        break;
+                    case "G":
+                    case "g":
+                        Console.ReadKey();
+                        break;
+                    case "X":
+                    case "x":
+                        Console.WriteLine("Doriti sa salvati modificarile? :");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                        break;
+                }
+
+
+                Console.ReadKey();
+            }
         }
+
     }
 }
